@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Capsule Segmentation Result</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-image: url("/static/Logo_blue.png");
+            background-size: 50%;
+            background-repeat: no-repeat;
+            background-position: center 50%;
+        }
+        .container {
+            margin-top: 50px;
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+        }
+        .btn {
+            margin: 5px;
+        }
+        .image-pair {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .image-pair img {
+            max-width: 45%;
+            max-height: 45%;
+            margin: 0 10px;
+        }
+    </style>
+    <script>
+        function showContent() {
+            var select = document.getElementById("fileSelect");
+            var displayImg = document.getElementById("displayImage");
+            var plotImg = document.getElementById("plotImage");
+            var summaryDiv = document.getElementById("summaryData");
+            var selectedValue = select.value;
+            if (selectedValue === "summary") {
+                displayImg.style.display = "none";
+                plotImg.style.display = "none";
+                summaryDiv.style.display = "block";
+            } else {
+                var values = selectedValue.split("|");
+                displayImg.src = "/static/files/" + values[0];
+                plotImg.src = "/static/files/" + values[1];
+                displayImg.style.display = "block";
+                plotImg.style.display = "block";
+                summaryDiv.style.display = "none";
+            }
+        }
+    </script>
+</head>
+<body onload="showContent()">
+    <div class="container">
+        <h1 class="text-center">Processed Images</h1>
+        <div class="form-group">
+            <select id="fileSelect" class="form-control" onchange="showContent()">
+                {% for display_file, plot_file in image_pairs %}
+                    <option value="{{ display_file }}|{{ plot_file }}">{{ display_file.split('/')[-1].rsplit('_', 1)[0] }}</option>
+                {% endfor %}
+                <option value="summary">Summary</option>
+            </select>
+        </div>
+        <div class="image-pair">
+            <img id="displayImage" alt="Display Image">
+            <img id="plotImage" alt="Plot Image">
+        </div>
+        <div id="summaryData" style="display:none;">
+            <h2 class="text-center">Summary Data</h2>
+            <img src="/static/files/{{ summary_plot }}" alt="Summary Plot">
+            {{ summary_df|safe }}
+        </div>
+        <div class="text-center mt-3">
+            <a href="{{ url_for('cleanup') }}" class="btn btn-secondary">Upload more images</a>
+            <a href="{{ url_for('download', session_id=session_id) }}" class="btn btn-success">Download All Files</a>
+        </div>
+    </div>
+</body>
+</html>

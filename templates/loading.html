@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Processing Images...</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 20%;
+        }
+        .loader {
+            border: 16px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 16px solid #3498db;
+            width: 120px;
+            height: 120px;
+            animation: spin 2s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .message {
+            margin-top: 20px;
+            font-size: 1.5rem;
+            color: #3498db;
+        }
+    </style>
+</head>
+<body>
+    <div class="loader"></div>
+    <div class="message">Your images are being processed...</div>
+
+    <script>
+        function checkStatus() {
+            fetch(`/task_status/{{ task_id }}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'Completed!') {
+                    window.location.href = "/result/{{ task_id }}";
+                }
+            });
+        }
+        setInterval(checkStatus, 3000);  // Poll every 3 seconds
+    </script>
+</body>
+</html>

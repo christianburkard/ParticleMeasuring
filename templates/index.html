@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Capsule Segmentation</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-image: url("/static/Logo_blue.png");
+            background-size: 50%;
+            background-repeat: no-repeat;
+            background-position: center 50%;
+        }
+        .container {
+            margin-top: 50px;
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+        }
+        .loading {
+            display: none;
+            color: red;
+        }
+    </style>
+    <script>
+        function handleFormSubmit() {
+            document.getElementById('analyzeButton').disabled = true;
+            document.getElementById('loadingMessage').style.display = 'block';
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center">Upload Files</h1>
+        <form method="POST" enctype="multipart/form-data" onsubmit="handleFormSubmit()">
+            <div class="form-group">
+                {{ form.hidden_tag() }}
+                {{ form.files.label(class="form-label") }}
+                {{ form.files(class="form-control-file") }}
+            </div>
+            <div class="form-group">
+                {{ form.magnification.label(class="form-label") }}
+                {{ form.magnification(class="form-control") }}
+            </div>
+            
+            <!-- Updated Radio Buttons for Resolution -->
+            <div class="form-group">
+                <label class="form-label">Resolution</label><br>
+                <div class="form-check">
+                    <input type="radio" name="resolution" id="normal" value="normal" class="form-check-input" {% if form.resolution.data == 'normal' %}checked{% endif %}>
+                    <label class="form-check-label" for="normal">Normal</label>
+                </div>
+                <div class="form-check">
+                    <input type="radio" name="resolution" id="hd" value="hd" class="form-check-input" {% if form.resolution.data == 'hd' %}checked{% endif %}>
+                    <label class="form-check-label" for="hd">HD</label>
+                </div>
+            </div>
+
+            <div class="form-group text-center">
+                {{ form.submit(class="btn btn-primary", id="analyzeButton") }}
+            </div>
+        </form>
+        <p id="loadingMessage" class="text-center loading">Processing... Please wait.</p>
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <div class="alert alert-warning">
+                    <ul>
+                    {% for message in messages %}
+                        <li>{{ message }}</li>
+                    {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+        {% endwith %}
+    </div>
+</body>
+</html>
